@@ -168,6 +168,12 @@ func RetrieveToken(ctx context.Context, ClientID, ClientSecret, TokenURL string,
 
 	var token *Token
 	content, _, _ := mime.ParseMediaType(r.Header.Get("Content-Type"))
+
+	// weibo returned Content-Type as text/plain, but the content is encoded as JSON actually
+	if (strings.HasPrefix(TokenURL, "https://api.weibo.com/")) {
+		content = "application/json"
+	}
+
 	switch content {
 	case "application/x-www-form-urlencoded", "text/plain":
 		vals, err := url.ParseQuery(string(body))
